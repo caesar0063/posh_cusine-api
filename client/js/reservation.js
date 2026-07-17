@@ -1,4 +1,4 @@
-const API = 'http://localhost:5000/api/v1/reservations';
+const API = 'https://posh-cusine-api.onrender.com/';
 
 const form = document.getElementById('reservationForm');
 

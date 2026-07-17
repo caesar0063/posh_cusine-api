@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api/v1/auth/login';
+const API_URL = 'const API_URL = "https://posh-cusine-api.onrender.com/";';
 
 const form = document.getElementById('loginForm');
 const button = document.getElementById('loginBtn');

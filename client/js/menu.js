@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api/v1/menu';
+const API_URL = 'https://posh-cusine-api.onrender.com/';
 
 const menuGrid = document.getElementById('menu-grid');
 
@@ -97,7 +97,7 @@ function renderMenu(menuItems) {
 
                <img
    src="${
-     item.image ? `http://localhost:5000/uploads/menu/${item.image}` : 'images/placeholder.jpg'
+     item.image ? `https://posh-cusine-api.onrender.com/uploads/menu/${item.image}` : 'images/placeholder.jpg'
    }"
     alt="${item.name}"
 >
