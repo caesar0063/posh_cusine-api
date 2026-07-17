@@ -872,6 +872,12 @@ footer {
   padding-top: 20px;
 }
 
+.admin-link{
+    font-size:12px;
+    opacity:0.5;
+    color:white;
+}
+
 /* =========================
    LIGHTBOX
 ========================= */
