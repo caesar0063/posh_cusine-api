@@ -17,7 +17,7 @@ const app = express();
 const corsOptions = {
   origin: [
     "http://localhost:5500",
-    "YOUR_FRONTEND_URL"
+    "https://caesar0063.github.io"
   ],
   credentials: true
 };
