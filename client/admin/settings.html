@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Settings | Posh Cuisine</title>
+
+    <!-- Google Font -->
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- Admin CSS -->
+
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- =========================
+    SIDEBAR
+    ========================= -->
+
+      <aside class="sidebar">
+        <h2>
+          Posh
+          <span>Cuisine</span>
+        </h2>
+
+        <ul>
+          <li onclick="location.href = 'dashboard.html'">
+            <i class="fa-solid fa-chart-line"></i>
+
+            Dashboard
+          </li>
+
+          <li onclick="location.href = 'reservation.html'">
+            <i class="fa-solid fa-calendar-check"></i>
+
+            Reservations
+          </li>
+
+          <li onclick="location.href = 'menu.html'">
+            <i class="fa-solid fa-utensils"></i>
+
+            Menu
+          </li>
+
+          <li onclick="location.href = 'tables.html'">
+            <i class="fa-solid fa-chair"></i>
+
+            Tables
+          </li>
+
+          <li class="active">
+            <i class="fa-solid fa-gear"></i>
+
+            Settings
+          </li>
+        </ul>
+      </aside>
+
+      <!-- =========================
+    MAIN CONTENT
+    ========================= -->
+
+      <main class="main-content">
+        <!-- =========================
+        TOPBAR
+        ========================= -->
+        <header class="topbar">
+          <div>
+            <h1>Settings</h1>
+
+            <p>Manage your admin account and system preferences</p>
+          </div>
+
+          <button id="logoutBtn" class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Logout
+          </button>
+        </header>
+
+        <!-- =========================
+        SETTINGS
+        ========================= -->
+
+        <section class="settings-container">
+          <!-- =========================
+            PROFILE SETTINGS
+            ========================= -->
+
+          <div class="settings-card">
+            <h3>
+              <i class="fa-solid fa-user"></i>
+
+              Admin Profile
+            </h3>
+
+            <form id="profileForm">
+              <div class="form-group">
+                <label for="adminNameInput"> Name </label>
+
+                <input type="text" id="adminNameInput" required />
+              </div>
+
+              <div class="form-group">
+                <label for="adminEmail"> Email </label>
+
+                <input type="email" id="adminEmail" disabled />
+              </div>
+
+              <button type="submit">Save Profile</button>
+            </form>
+          </div>
+
+          <!-- =========================
+            CHANGE PASSWORD
+            ========================= -->
+
+          <div class="settings-card">
+            <h3>
+              <i class="fa-solid fa-lock"></i>
+
+              Change Password
+            </h3>
+
+            <form id="passwordForm">
+              <div class="form-group">
+                <label for="currentPassword"> Current Password </label>
+
+                <input type="password" id="currentPassword" required />
+              </div>
+
+              <div class="form-group">
+                <label for="newPassword"> New Password </label>
+
+                <input type="password" id="newPassword" required />
+              </div>
+
+              <div class="form-group">
+                <label for="confirmPassword"> Confirm Password </label>
+
+                <input type="password" id="confirmPassword" required />
+              </div>
+
+              <button type="submit">Update Password</button>
+            </form>
+          </div>
+
+          <!-- =========================
+            SYSTEM PREFERENCES
+            ========================= -->
+
+          <div class="settings-card">
+            <h3>
+              <i class="fa-solid fa-sliders"></i>
+
+              System Preferences
+            </h3>
+
+            <div class="setting-option">
+              <label for="emailNotification"> Email Notifications </label>
+
+              <input type="checkbox" id="emailNotification" checked />
+            </div>
+
+            <div class="setting-option">
+              <label for="reservationAlert"> Reservation Alerts </label>
+
+              <input type="checkbox" id="reservationAlert" checked />
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <!-- =========================
+SCRIPTS
+========================= -->
+
+    <script src="js/authGuard.js"></script>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script src="js/settings.js"></script>
+  </body>
+</html>

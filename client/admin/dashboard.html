@@ -1,0 +1,344 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Dashboard | Posh Cuisine</title>
+
+    <!-- Google Font -->
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Font Awesome -->
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <!-- Admin CSS -->
+
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- =========================
+SIDEBAR
+========================= -->
+
+      <aside class="sidebar">
+        <h2>
+          Posh
+
+          <span> Cuisine </span>
+        </h2>
+
+        <ul>
+          <li class="active">
+            <i class="fa-solid fa-chart-line"></i>
+
+            Dashboard
+          </li>
+
+          <li onclick="location.href = 'reservation.html'">
+            <i class="fa-solid fa-calendar-check"></i>
+
+            Reservations
+          </li>
+
+          <li onclick="location.href = 'menu.html'">
+            <i class="fa-solid fa-utensils"></i>
+
+            Menu
+          </li>
+
+          <li onclick="location.href = 'tables.html'">
+            <i class="fa-solid fa-chair"></i>
+
+            Tables
+          </li>
+
+          <li onclick="location.href = 'settings.html'">
+            <i class="fa-solid fa-gear"></i>
+
+            Settings
+          </li>
+        </ul>
+      </aside>
+
+      <!-- =========================
+MAIN CONTENT
+========================= -->
+
+      <main class="dashboard-grid main-content">
+        <!-- =========================
+HEADER
+========================= -->
+
+        <section class="dashboard-header">
+          <div>
+            <h1>Dashboard</h1>
+
+            <p>
+              Welcome back,
+
+              <strong id="adminName"> Admin </strong>
+            </p>
+          </div>
+
+          <button id="logoutBtn" class="logout-btn">
+            <i class="fa-solid fa-right-from-bracket"></i>
+
+            Logout
+          </button>
+        </section>
+
+        <!-- =========================
+STATISTICS
+========================= -->
+
+        <section class="stats-section">
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-calendar-check"></i>
+            </div>
+
+            <div>
+              <h4>Total Reservations</h4>
+
+              <p id="totalReservations">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-calendar-week"></i>
+            </div>
+
+            <div>
+              <h4>Today's Reservation</h4>
+
+              <p id="todayReservations">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-calendar-days"></i>
+            </div>
+
+            <div>
+              <h4>Pending</h4>
+
+              <p id="pendingReservations">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-list"></i>
+            </div>
+
+            <div>
+              <h4>Confirmed</h4>
+
+              <p id="confirmedReservations">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-clock"></i>
+            </div>
+
+            <div>
+              <h4>Cancelled</h4>
+
+              <p id="cancelledReservations">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <div>
+              <h4>Total Tables</h4>
+
+              <p id="totalTables">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-chair"></i>
+            </div>
+
+            <div>
+              <h4>Available Tables</h4>
+
+              <p id="availableTables">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-calendar-days"></i>
+            </div>
+
+            <div>
+              <h4>Total Menu Items</h4>
+
+              <p id="totalMenuItems">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-utensils"></i>
+            </div>
+
+            <div>
+              <h4>Available Menu</h4>
+
+              <p id="availableMenuItems">0</p>
+            </div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-icon">
+              <i class="fa-solid fa-users"></i>
+            </div>
+
+            <div>
+              <h4>Occupied Tables</h4>
+
+              <p id="occupiedTables">0</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- =========================
+CHART
+========================= -->
+
+        <section class="chart-section">
+          <h3>Reservation Trend</h3>
+
+          <canvas id="reservationChart"></canvas>
+        </section>
+
+        <!-- =========================
+OCCUPANCY
+========================= -->
+
+        <section class="occupancy-section">
+          <h3>Restaurant Occupancy</h3>
+
+          <div class="occupancy-header">
+            <span> Current Usage </span>
+
+            <strong id="occupancyPercent"> 0% </strong>
+          </div>
+
+          <div class="progress">
+            <div class="progress-fill" id="occupancyBar"></div>
+          </div>
+        </section>
+
+        <!-- =========================
+TODAY SCHEDULE
+========================= -->
+
+        <section class="schedule-section">
+          <h3>Today's Schedule</h3>
+
+          <div id="todaySchedule" class="timeline">Loading...</div>
+        </section>
+
+        <!-- =========================
+RECENT RESERVATIONS
+========================= -->
+
+        <section class="recent-section">
+          <h3>Recent Reservations</h3>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Customer</th>
+
+                  <th>Guests</th>
+
+                  <th>Date</th>
+
+                  <th>Time</th>
+
+                  <th>Status</th>
+                </tr>
+              </thead>
+
+              <tbody id="reservationTable"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- =========================
+ACTIVITY
+========================= -->
+
+        <section class="activity-section">
+          <h3>Recent Activity</h3>
+
+          <div id="activityFeed">Loading...</div>
+        </section>
+
+        <!-- =========================
+QUICK ACTIONS
+========================= -->
+
+        <section class="actions-section">
+          <h3>Quick Actions</h3>
+
+          <button onclick="location.href = 'reservation.html'">
+            <i class="fa-solid fa-plus"></i>
+
+            New Reservation
+          </button>
+
+          <button onclick="location.href = 'tables.html'">
+            <i class="fa-solid fa-chair"></i>
+
+            Manage Tables
+          </button>
+
+          <button onclick="location.href = 'menu.html'">
+            <i class="fa-solid fa-utensils"></i>
+
+            Manage Menu
+          </button>
+        </section>
+      </main>
+    </div>
+
+    <!-- =========================
+SCRIPTS
+========================= -->
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="js/authGuard.js"></script>
+
+    <script src="js/api.js"></script>
+
+    <script src="js/dashboard.js"></script>
+  </body>
+</html>

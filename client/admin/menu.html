@@ -1,0 +1,238 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>Menu Management | Posh Cuisine</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+
+    <link rel="stylesheet" href="css/admin.css" />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- ===========================
+SIDEBAR
+=========================== -->
+
+      <aside class="sidebar">
+        <h2>
+          Posh
+          <span>Cuisine</span>
+        </h2>
+
+        <ul>
+          <li onclick="location.href = 'dashboard.html'">
+            <i class="fa-solid fa-chart-line"></i>
+
+            Dashboard
+          </li>
+
+          <li onclick="location.href = 'reservation.html'">
+            <i class="fa-solid fa-calendar-check"></i>
+
+            Reservations
+          </li>
+
+          <li class="active">
+            <i class="fa-solid fa-utensils"></i>
+
+            Menu
+          </li>
+
+          <li onclick="location.href = 'tables.html'">
+            <i class="fa-solid fa-chair"></i>
+
+            Tables
+          </li>
+
+          <li onclick="location.href = 'settings.html'">
+            <i class="fa-solid fa-gear"></i>
+
+            Settings
+          </li>
+        </ul>
+      </aside>
+
+      <!-- ===========================
+MAIN CONTENT
+=========================== -->
+
+      <main class="main-content">
+        <div class="topbar">
+          <div>
+            <h1>Menu Management</h1>
+
+            <p>Manage all restaurant menu items</p>
+          </div>
+
+          <button id="addMenuBtn">
+            <i class="fa-solid fa-plus"></i>
+
+            Add Menu Item
+          </button>
+        </div>
+
+        <!-- Search -->
+
+        <section class="table-card">
+          <div class="toolbar">
+            <input type="text" id="searchMenu" placeholder="Search menu item..." />
+
+            <select id="categoryFilter">
+              <option value="">All Categories</option>
+
+              <option>Appetizer</option>
+
+              <option>Main Course</option>
+
+              <option>Dessert</option>
+
+              <option>Drinks</option>
+            </select>
+          </div>
+
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Image</th>
+
+                  <th>Food</th>
+
+                  <th>Category</th>
+
+                  <th>Price</th>
+
+                  <th>Status</th>
+
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="menuTable"></tbody>
+            </table>
+          </div>
+
+          <div id="pagination" class="pagination"></div>
+        </section>
+      </main>
+    </div>
+
+    <!-- ===========================
+ADD / EDIT MENU MODAL
+=========================== -->
+
+    <div class="modal" id="menuModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 id="modalTitle">Add Menu Item</h2>
+
+          <span class="close-modal"> &times; </span>
+        </div>
+
+        <div class="modal-body">
+          <form id="menuForm">
+            <input type="hidden" id="menuId" />
+
+            <div class="form-group">
+              <label> Food Name </label>
+
+              <input type="text" id="foodName" required />
+            </div>
+
+            <div class="form-group">
+              <label> Category </label>
+
+              <select id="category" required>
+                <option value="">Select Category</option>
+
+                <option>Appetizer</option>
+
+                <option>Main Course</option>
+
+                <option>Dessert</option>
+
+                <option>Drinks</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label> Price (₦) </label>
+
+              <input type="number" id="price" required />
+            </div>
+
+            <div class="form-group">
+              <label> Description </label>
+
+              <textarea id="description" rows="4"> </textarea>
+            </div>
+
+            <div class="form-group">
+              <label> Food Image </label>
+
+              <input type="file" id="image" />
+            </div>
+
+            <div class="form-group">
+              <label> Availability </label>
+
+              <select id="availability">
+                <option value="Available">Available</option>
+
+                <option value="Out of Stock">Out of Stock</option>
+              </select>
+            </div>
+
+            <div class="modal-actions">
+              <button type="button" class="secondary-btn cancel-btn">Cancel</button>
+
+              <button type="submit">Save Menu Item</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- ==========================
+     Confirmation Modal
+========================== -->
+
+    <div class="modal" id="confirmModal">
+      <div class="modal-content small-modal">
+        <div class="modal-header">
+          <h2 id="confirmTitle">Confirm Action</h2>
+        </div>
+
+        <div class="modal-body">
+          <p id="confirmMessage">Are you sure?</p>
+
+          <div class="modal-actions">
+            <button class="secondary-btn" id="cancelAction">Cancel</button>
+
+            <button class="danger-btn" id="confirmAction">Continue</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/authGuard.js"></script>
+
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+
+    <script src="js/menu.js"></script>
+  </body>
+</html>

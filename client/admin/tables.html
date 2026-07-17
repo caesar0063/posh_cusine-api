@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Table Management | Posh Cuisine</title>
+
+    <link rel="stylesheet" href="css/admin.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <div class="dashboard">
+      <!-- Sidebar -->
+
+      <aside class="sidebar">
+        <h2>Posh <span>Cuisine</span></h2>
+
+        <ul>
+          <li onclick="location.href = 'dashboard.html'">
+            <i class="fa-solid fa-chart-line"></i>
+            Dashboard
+          </li>
+
+          <li onclick="location.href = 'reservation.html'">
+            <i class="fa-solid fa-calendar-check"></i>
+            Reservations
+          </li>
+
+          <li onclick="location.href = 'menu.html'">
+            <i class="fa-solid fa-utensils"></i>
+            Menu
+          </li>
+
+          <li class="active">
+            <i class="fa-solid fa-chair"></i>
+            Tables
+          </li>
+
+          <li onclick="location.href = 'settings.html'">
+            <i class="fa-solid fa-gear"></i>
+
+            Settings
+          </li>
+        </ul>
+      </aside>
+
+      <!-- Main -->
+
+      <main class="main-content">
+        <header class="topbar">
+          <h1>Table Management</h1>
+
+          <button id="addTableBtn">
+            <i class="fa-solid fa-plus"></i>
+            Add Table
+          </button>
+        </header>
+
+        <!-- Toolbar -->
+
+        <div class="toolbar">
+          <input type="text" id="searchTable" placeholder="Search table..." />
+
+          <select id="statusFilter">
+            <option value="">All Status</option>
+
+            <option value="Available">Available</option>
+
+            <option value="Reserved">Reserved</option>
+
+            <option value="Occupied">Occupied</option>
+
+            <option value="Maintenance">Maintenance</option>
+          </select>
+        </div>
+
+        <!-- Table -->
+
+        <section class="table-card">
+          <div class="table-wrapper">
+            <table>
+              <thead>
+                <tr>
+                  <th>Table</th>
+
+                  <th>Capacity</th>
+
+                  <th>Status</th>
+
+                  <th>Actions</th>
+                </tr>
+              </thead>
+
+              <tbody id="tableList"></tbody>
+            </table>
+          </div>
+        </section>
+
+        <!-- Pagination -->
+
+        <div id="pagination"></div>
+      </main>
+    </div>
+
+    <!-- ===========================
+Table Modal
+=========================== -->
+
+    <div class="modal" id="tableModal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+
+        <h2 id="modalTitle">Add Table</h2>
+
+        <form id="tableForm">
+          <div class="form-group">
+            <label>Table Number</label>
+
+            <input type="text" id="tableNumber" required />
+          </div>
+
+          <div class="form-group">
+            <label>Capacity</label>
+
+            <input type="number" id="capacity" min="1" required />
+          </div>
+
+          <div class="form-group">
+            <label>Status</label>
+
+            <select id="status">
+              <option value="Available">Available</option>
+
+              <option value="Reserved">Reserved</option>
+
+              <option value="Occupied">Occupied</option>
+
+              <option value="Maintenance">Maintenance</option>
+            </select>
+          </div>
+
+          <button type="submit">Save Table</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ===========================
+Confirmation Modal
+=========================== -->
+
+    <div class="modal" id="confirmModal">
+      <div class="modal-content">
+        <h2 id="confirmTitle">Confirm Action</h2>
+
+        <p id="confirmMessage"></p>
+
+        <div class="modal-actions">
+          <button id="cancelAction" class="secondary-btn">Cancel</button>
+
+          <button id="confirmAction" class="danger-btn">Delete</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/authGuard.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/tables.js"></script>
+  </body>
+</html>
