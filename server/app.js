@@ -15,11 +15,11 @@ const app = express();
 
 // Middleware
 const corsOptions = {
-    origin: [
-        "http://localhost:5500",
-        "YOUR_FRONTEND_URL"
-    ],
-    credentials:true
+  origin: [
+    "http://localhost:5500",
+    "YOUR_FRONTEND_URL"
+  ],
+  credentials: true
 };
 
 
