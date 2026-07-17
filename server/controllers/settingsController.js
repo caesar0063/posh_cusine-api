@@ -1,0 +1,2 @@
+getSettings();
+updateSettings();
