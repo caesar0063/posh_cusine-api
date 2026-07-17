@@ -31,7 +31,7 @@ form.addEventListener('submit', async (e) => {
   const password = document.getElementById('password').value;
 
   try {
-    const response = await fetch('https://posh-cusine-api.onrender.com/', {
+    const response = await fetch('https://posh-cusine-api.onrender.com/api/v1/auth/login', {
       method: 'POST',
 
       headers: {
