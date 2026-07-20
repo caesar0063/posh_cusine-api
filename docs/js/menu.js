@@ -168,14 +168,14 @@ function renderMenu(menuItems) {
 
       <div class="menu-image">
 
-        <img
-          src="${
-            item.image
-              ? `http://localhost:5000/uploads/menu/${item.image}`
-              : 'images/placeholder.jpg'
-          }"
-          alt="${item.name}"
-        >
+      <img
+       src="${
+         item.image
+            ? `https://posh-cusine-api.onrender.com/uploads/menu/${item.image}`
+            : 'images/placeholder.jpg'
+        }"
+        alt="${item.name}"
+>
 
       </div>
 

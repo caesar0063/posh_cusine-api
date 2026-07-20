@@ -119,11 +119,12 @@ function displayMenu(items) {
             <td>
 
                 <img
-                    src="${
-                      item.image
-  ? `https://posh-cusine-api.onrender.com/uploads/menu/${item.image}`
-  : 'https://placehold.co/80x80'
-                    }"
+                  src="${
+                    item.image
+                      ? `https://posh-cusine-api.onrender.com/uploads/menu/${item.image}`
+                      : '../images/placeholder.jpg'
+                  }"
+                  alt="${item.name}"
                     width="70"
                     height="70"
                     style="object-fit:cover;border-radius:10px;"
