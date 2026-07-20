@@ -27,30 +27,22 @@ const createReservation = asyncHandler(async (req, res) => {
 
   const reservation = await Reservation.create(req.body);
 
-
-  // Respond immediately
-  sendSuccess(
-    res,
-    reservation,
-    'Reservation created successfully',
-    HTTP_STATUS.CREATED
-  );
+sendSuccess(
+  res,
+  reservation,
+  'Reservation created successfully',
+  HTTP_STATUS.CREATED
+);
 
 
-  // Send email in background
-  try {
-
-    await sendReservationEmail(reservation);
-
-  } catch (emailError) {
-
+// Send email in background
+sendReservationEmail(reservation)
+  .catch((emailError) => {
     console.error(
       'Email notification failed:',
       emailError.message
     );
-
-  }
-
+  });
 });
 
 
