@@ -22,17 +22,37 @@ const {
  * @param {Object} req - Express request
  * @param {Object} res - Express response
  */
+
 const createReservation = asyncHandler(async (req, res) => {
+
   const reservation = await Reservation.create(req.body);
 
+
+  // Respond immediately
+  sendSuccess(
+    res,
+    reservation,
+    'Reservation created successfully',
+    HTTP_STATUS.CREATED
+  );
+
+
+  // Send email in background
   try {
+
     await sendReservationEmail(reservation);
+
   } catch (emailError) {
-    console.error('Email notification failed:', emailError.message);
+
+    console.error(
+      'Email notification failed:',
+      emailError.message
+    );
+
   }
 
-  sendSuccess(res, reservation, 'Reservation created successfully', HTTP_STATUS.CREATED);
 });
+
 
 /**
  * Get All Reservations - GET /api/v1/reservations
