@@ -175,88 +175,70 @@ if (!form) {
 
     try {
 
-
-      console.log(
-        'Sending reservation:',
-        reservation
-      );
+  console.log("Sending reservation:", reservation);
 
 
-     const response = await fetch(RESERVATION_API_URL, {
+  const response = await fetch(RESERVATION_API_URL, {
+
+    method: "POST",
+
+    headers: {
+      "Content-Type": "application/json"
+    },
+
+    body: JSON.stringify(reservation)
+
+  });
 
 
-        method:'POST',
+  console.log("STATUS:", response.status);
 
 
-        headers:{
+  const result = await response.json();
 
 
-          'Content-Type':'application/json'
+  console.log("SERVER RESPONSE:", result);
 
 
-        },
+  if(response.ok && result.success){
+
+    showToast(
+      "Reservation submitted successfully."
+    );
+
+    form.reset();
+
+  } else {
+
+    showToast(
+      result.message || "Reservation failed.",
+      "#dc3545"
+    );
+
+  }
 
 
-        body:JSON.stringify(reservation)
+}
+catch(error){
+
+  console.error(
+    "Reservation Error:",
+    error
+  );
 
 
-      });
+  showToast(
+    error.message || "Server unavailable.",
+    "#dc3545"
+  );
 
 
+}
+finally{
 
+  resetButton();
 
-      const result = await response.json();
-
-
-
-
-      if(response.ok && result.success){
-
-
-        showToast(
-          'Reservation submitted successfully.'
-        );
-
-
-        form.reset();
-
-
-      }else{
-
-
-        showToast(
-          result.message || 'Reservation failed.',
-          '#dc3545'
-        );
-
-
-      }
-
-
-
-
-
-    } catch(error){
-
-
-      console.error(
-        'Reservation Error:',
-        error
-      );
-
-
-      showToast(
-        'Server unavailable. Try again later.',
-        '#dc3545'
-      );
-
-
-    }
-
-
-
-    resetButton();
-
+}
 
   });
 
