@@ -68,7 +68,7 @@ Loading tables...
     );
 
     allTables = result.data;
-
+    console.log('TABLE API RESPONSE:', result.data);
     displayTables(allTables);
 
     createPagination(result.pages);
@@ -100,17 +100,11 @@ function displayTables(tables) {
 
   if (!tables.length) {
     tableBody.innerHTML = `
-
-    <tr>
-
+      <tr>
         <td colspan="4" style="text-align:center;padding:40px;">
-
-            No tables found.
-
+          No tables found.
         </td>
-
-    </tr>
-
+      </tr>
     `;
 
     return;
@@ -119,50 +113,95 @@ function displayTables(tables) {
   tableBody.innerHTML = '';
 
   tables.forEach((table) => {
+    const reservations = table.reservations || [];
+
+    const reservationInfo = reservations.length
+      ? `
+        <div class="table-reservation-info">
+
+          <strong>
+            ${reservations.length}
+            reservation${reservations.length > 1 ? 's' : ''}
+          </strong>
+
+          <div class="reservation-list">
+
+            ${reservations
+              .map(
+                (reservation) => `
+                  <div class="reservation-item">
+
+                    <strong>
+                      ${reservation.time}
+                    </strong>
+
+                    <span>
+                      ${reservation.customer}
+                    </span>
+
+                  </div>
+                `
+              )
+              .join('')}
+
+          </div>
+
+        </div>
+      `
+      : '';
+
     tableBody.innerHTML += `
+      <tr>
 
-        <tr>
+        <td>
+          <strong>${table.tableNumber}</strong>
+        </td>
 
-            <td>${table.tableNumber}</td>
+        <td>
+          ${table.capacity}
+        </td>
 
-            <td>${table.capacity}</td>
+        <td>
 
-            <td>
+          <span class="status ${table.displayStatus.toLowerCase()}">
+            ${table.displayStatus}
+          </span>
 
-                <span class="status ${table.status.toLowerCase()}">
+          ${reservationInfo}
 
-                    ${table.status}
+        </td>
 
-                </span>
+        <td class="actions">
 
-            </td>
+          <button
+            class="edit-btn"
+            data-id="${table._id}"
+            title="Edit">
 
-            <td class="actions">
-<button
-    class="edit-btn"
-    data-id="${table._id}"
-    title="Edit">
+            <i class="fa-solid fa-pen"></i>
 
-    <i class="fa-solid fa-pen"></i>
+          </button>
 
-</button>
+          <button
+            class="delete-btn"
+            data-id="${table._id}"
+            title="Delete">
 
-<button
-    class="delete-btn"
-    data-id="${table._id}"
-    title="Delete">
+            <i class="fa-solid fa-trash"></i>
 
-    <i class="fa-solid fa-trash"></i>
+          </button>
 
-</button>
+        </td>
 
-            </td>
-
-        </tr>
-
-        `;
+      </tr>
+    `;
   });
 }
+
+
+// ===============================
+// Table Actions
+// ===============================
 
 const tableBody = document.getElementById('tableList');
 
@@ -183,6 +222,7 @@ tableBody.addEventListener('click', (e) => {
     deleteTable(id);
   }
 });
+
 
 // ===============================
 // Pagination

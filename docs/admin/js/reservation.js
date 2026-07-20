@@ -142,90 +142,78 @@ ${r.status}
 
 <td class="actions">
 
-<button
-class="view-btn"
-onclick="viewReservation('${r._id}')">
+  <button
+    class="view-btn"
+    onclick="viewReservation('${r._id}')">
 
-<i class="fa-solid fa-eye"></i>
+    <i class="fa-solid fa-eye"></i>
 
-</button>
-${
-  r.status === 'Pending'
-    ? `
+  </button>
 
-<button
-class="confirm-btn"
-onclick="updateStatus('${r._id}','Confirmed')">
+  ${
+    r.status === 'Pending' && r.assignedTable
+      ? `
+        <button
+          class="confirm-btn"
+          onclick="updateStatus('${r._id}', 'Confirmed')">
 
-<i class="fa-solid fa-check"></i>
+          <i class="fa-solid fa-check"></i>
 
-</button>
+        </button>
+      `
+      : ''
+  }
 
-`
-    : ''
-}
+  ${
+    r.status === 'Confirmed'
+      ? `
+        <button
+          class="seat-btn"
+          onclick="updateStatus('${r._id}', 'Seated')">
 
+          <i class="fa-solid fa-chair"></i>
 
+        </button>
+      `
+      : ''
+  }
 
-${
-  r.status === 'Confirmed'
-    ? `
+  ${
+    r.status === 'Seated'
+      ? `
+        <button
+          class="complete-btn"
+          onclick="updateStatus('${r._id}', 'Completed')">
 
-<button
-class="seat-btn"
-onclick="updateStatus('${r._id}','Seated')">
+          <i class="fa-solid fa-circle-check"></i>
 
-<i class="fa-solid fa-chair"></i>
+        </button>
+      `
+      : ''
+  }
 
-</button>
+  ${
+    r.status !== 'Cancelled' &&
+    r.status !== 'Completed'
+      ? `
+        <button
+          class="cancel-btn"
+          onclick="updateStatus('${r._id}', 'Cancelled')">
 
-`
-    : ''
-}
+          <i class="fa-solid fa-xmark"></i>
 
+        </button>
+      `
+      : ''
+  }
 
+  <button
+    class="delete-btn"
+    onclick="deleteReservation('${r._id}')">
 
-${
-  r.status === 'Seated'
-    ? `
+    <i class="fa-solid fa-trash"></i>
 
-<button
-class="complete-btn"
-onclick="updateStatus('${r._id}','Completed')">
-
-<i class="fa-solid fa-circle-check"></i>
-
-</button>
-
-`
-    : ''
-}
-
-
-
-${
-  r.status !== 'Cancelled' && r.status !== 'Completed'
-    ? `
-
-<button
-class="cancel-btn"
-onclick="updateStatus('${r._id}','Cancelled')">
-
-<i class="fa-solid fa-xmark"></i>
-
-</button>
-
-`
-    : ''
-}
-
-<button
-class="delete-btn"
-onclick="deleteReservation('${r._id}')">
-
-<i class="fa-solid fa-trash"></i>
-
-</button>
+  </button>
 
 </td>
 
@@ -313,26 +301,15 @@ async function viewReservation(id) {
   try {
     const reservationDate = new Date(reservation.reservationDate).toISOString().split('T')[0];
 
-    const tableResult = await api(
-      `/tables/status/available?date=${reservationDate}&time=${encodeURIComponent(
-        reservation.reservationTime
-      )}`
-    );
+   const tableResult = await api(
+  `/tables/status/available?date=${reservationDate}` +
+    `&time=${encodeURIComponent(reservation.reservationTime)}` +
+    `&reservationId=${reservation._id}`
+);
 
     let availableTables = tableResult.data || [];
     console.log('Available table list:', availableTables);
     console.log('Number of tables:', availableTables.length);
-    /*
-     * Include currently assigned table
-     * if it is no longer available.
-     */
-
-    if (
-      reservation.assignedTable &&
-      !availableTables.some((table) => table._id === reservation.assignedTable._id)
-    ) {
-      availableTables.unshift(reservation.assignedTable);
-    }
 
     modalBody.innerHTML = `
 
@@ -526,19 +503,28 @@ ${table.tableNumber}
 </div>
 
 
-<div style="margin-top:25px">
+${
+  reservation.status === 'Pending' ||
+  reservation.status === 'Confirmed'
+    ? `
+      <div style="margin-top:25px">
 
-<button
+        <button
+          class="confirm-btn"
+          onclick="assignTable('${reservation._id}')">
 
-class="confirm-btn"
+          ${
+            reservation.assignedTable
+              ? 'Change Table'
+              : 'Assign Table'
+          }
 
-onclick="assignTable('${reservation._id}')">
+        </button>
 
-Assign Table
-
-</button>
-
-</div>
+      </div>
+    `
+    : ''
+}
 
 `;
 

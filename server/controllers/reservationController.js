@@ -4,17 +4,17 @@
  */
 
 const Reservation = require('../models/reservationModel');
-const Table = require('../models/tableModel');
 const asyncHandler = require('../utils/asyncHandler');
 const AppError = require('../utils/AppError');
 const { sendSuccess, sendPaginated } = require('../utils/responseFormatter');
 const { RESERVATION_STATUS, HTTP_STATUS } = require('../utils/constants');
 const sendReservationEmail = require('../utils/sendEmail');
+
 const {
   validateTableCapacity,
   checkTableAvailability,
   releaseTable,
-  occupyTable,
+  updateTableStatusByReservation,
 } = require('../services/tableService');
 
 /**
@@ -96,6 +96,7 @@ const getReservation = asyncHandler(async (req, res) => {
   sendSuccess(res, reservation, 'Reservation retrieved successfully', HTTP_STATUS.OK);
 });
 
+
 /**
  * Update Reservation - PATCH /api/v1/reservations/:id
  * @param {Object} req - Express request
@@ -105,65 +106,176 @@ const updateReservation = asyncHandler(async (req, res) => {
   const existingReservation = await Reservation.findById(req.params.id);
 
   if (!existingReservation) {
-    throw new AppError('Reservation not found.', HTTP_STATUS.NOT_FOUND);
+    throw new AppError(
+      'Reservation not found.',
+      HTTP_STATUS.NOT_FOUND
+    );
   }
 
-  // Validate table assignment if provided
-  if (req.body.assignedTable) {
-    const selectedTable = await validateTableCapacity(
-      req.body.assignedTable,
-      existingReservation.guests
-    );
+  const currentStatus = existingReservation.status;
+  const nextStatus = req.body.status || currentStatus;
 
-    // Check for double booking
-    const conflictingReservation = await checkTableAvailability(
-      req.body.assignedTable,
-      existingReservation.reservationDate,
-      existingReservation.reservationTime,
-      req.params.id
-    );
+  const allowedTransitions = {
+    [RESERVATION_STATUS.PENDING]: [
+      RESERVATION_STATUS.CONFIRMED,
+      RESERVATION_STATUS.CANCELLED,
+    ],
 
-    if (conflictingReservation) {
+    [RESERVATION_STATUS.CONFIRMED]: [
+      RESERVATION_STATUS.SEATED,
+      RESERVATION_STATUS.CANCELLED,
+    ],
+
+    [RESERVATION_STATUS.SEATED]: [
+      RESERVATION_STATUS.COMPLETED,
+    ],
+
+    [RESERVATION_STATUS.COMPLETED]: [],
+
+    [RESERVATION_STATUS.CANCELLED]: [],
+  };
+
+  // =========================
+  // VALIDATE STATUS TRANSITION
+  // =========================
+
+  if (
+    nextStatus !== currentStatus &&
+    !allowedTransitions[currentStatus].includes(nextStatus)
+  ) {
+    throw new AppError(
+      `Cannot change reservation from ${currentStatus} to ${nextStatus}.`,
+      HTTP_STATUS.BAD_REQUEST
+    );
+  }
+
+  const hasTableUpdate = Object.prototype.hasOwnProperty.call(
+    req.body,
+    'assignedTable'
+  );
+
+  const proposedTableId = hasTableUpdate
+    ? req.body.assignedTable
+    : existingReservation.assignedTable?.toString();
+
+  // =========================
+  // TABLE ASSIGNMENT RULES
+  // =========================
+
+  if (hasTableUpdate) {
+    if (
+      currentStatus !== RESERVATION_STATUS.PENDING &&
+      currentStatus !== RESERVATION_STATUS.CONFIRMED
+    ) {
       throw new AppError(
-        `Table ${selectedTable.tableNumber} is already reserved for this time.`,
-        HTTP_STATUS.CONFLICT
+        'Table assignment can only be changed before the customer is seated.',
+        HTTP_STATUS.BAD_REQUEST
       );
+    }
+
+    if (proposedTableId) {
+      const selectedTable = await validateTableCapacity(
+        proposedTableId,
+        existingReservation.guests
+      );
+
+      const conflictingReservation =
+        await checkTableAvailability(
+          proposedTableId,
+          existingReservation.reservationDate,
+          existingReservation.reservationTime,
+          req.params.id
+        );
+
+      if (conflictingReservation) {
+        throw new AppError(
+          `Table ${selectedTable.tableNumber} is already reserved for this time.`,
+          HTTP_STATUS.CONFLICT
+        );
+      }
     }
   }
 
-  const reservation = await Reservation.findByIdAndUpdate(req.params.id, req.body, {
-    new: true,
-    runValidators: true,
-  }).populate('assignedTable');
+  // =========================
+  // CONFIRMATION RULE
+  // =========================
 
-  // Release previous table if changed
   if (
-    existingReservation.assignedTable &&
-    existingReservation.assignedTable.toString() !== reservation.assignedTable?.toString()
+    nextStatus === RESERVATION_STATUS.CONFIRMED &&
+    !proposedTableId
   ) {
-    await releaseTable(existingReservation.assignedTable);
+    throw new AppError(
+      'A table must be assigned before confirming the reservation.',
+      HTTP_STATUS.BAD_REQUEST
+    );
   }
 
-  // Occupy newly assigned table
+  // =========================
+  // SEATED RULE
+  // =========================
+
   if (
-    reservation.assignedTable &&
-    existingReservation.assignedTable?.toString() !== reservation.assignedTable.toString()
+    nextStatus === RESERVATION_STATUS.SEATED &&
+    !proposedTableId
   ) {
-    await occupyTable(reservation.assignedTable);
+    throw new AppError(
+      'A table must be assigned before seating the customer.',
+      HTTP_STATUS.BAD_REQUEST
+    );
   }
 
-  // Handle status-based table release
-  if (reservation.status === RESERVATION_STATUS.CANCELLED && reservation.assignedTable) {
-    await releaseTable(reservation.assignedTable);
-    reservation.assignedTable = null;
-    await reservation.save();
-  } else if (reservation.status === RESERVATION_STATUS.COMPLETED && reservation.assignedTable) {
-    await releaseTable(reservation.assignedTable);
-    reservation.assignedTable = null;
-    await reservation.save();
+  // =========================
+  // UPDATE RESERVATION
+  // =========================
+
+  const previousTableId =
+    existingReservation.assignedTable?.toString();
+
+  const reservation = await Reservation.findByIdAndUpdate(
+    req.params.id,
+    req.body,
+    {
+      new: true,
+      runValidators: true,
+    }
+  ).populate('assignedTable');
+
+  if (!reservation) {
+    throw new AppError(
+      'Reservation update failed.',
+      HTTP_STATUS.INTERNAL_SERVER_ERROR
+    );
   }
 
-  sendSuccess(res, reservation, 'Reservation updated successfully', HTTP_STATUS.OK);
+  const newTableId =
+    reservation.assignedTable?._id?.toString();
+
+  // =========================
+  // RELEASE OLD TABLE
+  // =========================
+
+  if (
+    previousTableId &&
+    previousTableId !== newTableId
+  ) {
+    await releaseTable(previousTableId);
+  }
+
+  // =========================
+  // UPDATE TABLE STATUS
+  // =========================
+
+  await updateTableStatusByReservation(
+    newTableId,
+    reservation.status
+  );
+
+  sendSuccess(
+    res,
+    reservation,
+    'Reservation updated successfully',
+    HTTP_STATUS.OK
+  );
 });
 
 /**

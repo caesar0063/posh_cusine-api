@@ -25,17 +25,48 @@ if (admin) {
 // =========================
 // Load Dashboard
 // =========================
-loadDashboardStats();
 
 loadDashboard();
 
 async function loadDashboard() {
   try {
+    const statsResult = await api('/dashboard');
+
+    const stats = statsResult.data;
+
+    document.getElementById('totalReservations').textContent =
+      stats.totalReservations;
+
+    document.getElementById('todayReservations').textContent =
+      stats.todayReservations;
+
+    document.getElementById('pendingReservations').textContent =
+      stats.pendingReservations;
+
+    document.getElementById('confirmedReservations').textContent =
+      stats.confirmedReservations;
+
+    document.getElementById('cancelledReservations').textContent =
+      stats.cancelledReservations;
+
+    document.getElementById('totalTables').textContent =
+      stats.totalTables;
+
+    document.getElementById('availableTables').textContent =
+      stats.availableTables;
+
+    document.getElementById('occupiedTables').textContent =
+      stats.occupiedTables;
+
+    document.getElementById('totalMenuItems').textContent =
+      stats.totalMenuItems;
+
+    document.getElementById('availableMenuItems').textContent =
+      stats.availableMenuItems;
+
     const result = await api('/reservations?limit=100');
 
     const reservations = result.data || [];
-
-    await updateStats();
 
     loadRecentReservations(reservations);
 
@@ -44,40 +75,12 @@ async function loadDashboard() {
     await loadTodaySchedule();
 
     loadActivityFeed(reservations);
+
   } catch (error) {
     console.error('Dashboard error:', error);
   }
 }
 
-async function loadDashboardStats() {
-  try {
-    const result = await api('/dashboard');
-
-    const stats = result.data;
-
-    document.getElementById('totalReservations').textContent = stats.totalReservations;
-
-    document.getElementById('todayReservations').textContent = stats.todayReservations;
-
-    document.getElementById('pendingReservations').textContent = stats.pendingReservations;
-
-    document.getElementById('confirmedReservations').textContent = stats.confirmedReservations;
-
-    document.getElementById('cancelledReservations').textContent = stats.cancelledReservations;
-
-    document.getElementById('totalTables').textContent = stats.totalTables;
-
-    document.getElementById('availableTables').textContent = stats.availableTables;
-
-    document.getElementById('occupiedTables').textContent = stats.occupiedTables;
-
-    document.getElementById('totalMenuItems').textContent = stats.totalMenuItems;
-
-    document.getElementById('availableMenuItems').textContent = stats.availableMenuItems;
-  } catch (error) {
-    console.error('Dashboard stats error:', error);
-  }
-}
 
 // =========================
 // Today's Schedule
@@ -85,7 +88,7 @@ async function loadDashboardStats() {
 
 async function loadTodaySchedule() {
   try {
-    const result = await api('/reservations/today');
+    const result = await api('/reservations/schedule/today');
 
     const reservations = result.data || [];
 
@@ -191,89 +194,6 @@ async function loadTodaySchedule() {
   }
 }
 
-// =========================
-// Update Statistics
-// =========================
-
-async function updateStats() {
-  try {
-    const reservationResult = await api('/reservations/stats');
-
-    const stats = reservationResult.data;
-
-    const reservationStats = {
-      todayCount: stats.todayReservations,
-
-      weekCount: stats.weekReservations,
-
-      monthCount: stats.monthReservations,
-
-      totalCount: stats.total,
-
-      pendingReservations: stats.pending,
-
-      confirmedReservations: stats.confirmed,
-    };
-
-    Object.keys(reservationStats).forEach((id) => {
-      const element = document.getElementById(id);
-
-      if (element) {
-        element.textContent = reservationStats[id];
-      }
-    });
-
-    const tableResult = await api('/tables/stats');
-
-    const tables = tableResult.data;
-
-    const tableStats = {
-      availableTables: tables.available,
-
-      occupiedTables: tables.occupied,
-    };
-
-    Object.keys(tableStats).forEach((id) => {
-      const element = document.getElementById(id);
-
-      if (element) {
-        element.textContent = tableStats[id];
-      }
-    });
-
-    updateOccupancy(tables);
-  } catch (error) {
-    console.error('Stats error:', error);
-  }
-}
-
-// =========================
-// Occupancy
-// =========================
-
-function updateOccupancy(tables) {
-  const total = tables.total || 0;
-
-  const occupied = tables.occupied || 0;
-
-  let percentage = 0;
-
-  if (total > 0) {
-    percentage = Math.round((occupied / total) * 100);
-  }
-
-  const percent = document.getElementById('occupancyPercent');
-
-  const bar = document.getElementById('occupancyBar');
-
-  if (percent) {
-    percent.textContent = percentage + '%';
-  }
-
-  if (bar) {
-    bar.style.width = percentage + '%';
-  }
-}
 
 // =========================
 // Recent Reservations

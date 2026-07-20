@@ -121,8 +121,8 @@ function displayMenu(items) {
                 <img
                     src="${
                       item.image
-                        ? `https://posh-cusine-api.onrender.com//uploads/menu/${item.image}`
-                        : 'https://placehold.co/80x80'
+  ? `https://posh-cusine-api.onrender.com/uploads/menu/${item.image}`
+  : 'https://placehold.co/80x80'
                     }"
                     width="70"
                     height="70"

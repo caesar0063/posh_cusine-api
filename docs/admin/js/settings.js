@@ -74,7 +74,7 @@ profileForm.addEventListener('submit', async (e) => {
       JSON.stringify(result.data)
     );
 
-    document.getElementById('adminName').textContent = result.data.name;
+    adminNameInput.value = result.data.name;
 
     alert('Profile updated successfully.');
   } catch (error) {

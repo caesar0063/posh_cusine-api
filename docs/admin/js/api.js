@@ -1,4 +1,5 @@
-const API_BASE = 'https://posh-cusine-api.onrender.com/';
+const API_BASE_URL =
+  'https://posh-cusine-api.onrender.com/api/v1';
 
 // =========================
 // GET TOKEN
@@ -37,7 +38,10 @@ async function api(endpoint, options = {}) {
     return;
   }
 
-  console.log('Calling API:', `${API_BASE}${endpoint}`);
+  console.log(
+    'Calling API:',
+    `${API_BASE_URL}${endpoint}`
+  );
 
   const headers = {
     Authorization: `Bearer ${token}`,
@@ -52,8 +56,7 @@ async function api(endpoint, options = {}) {
   }
 
   const response = await fetch(
-    `${API_BASE}${endpoint}`,
-
+    `${API_BASE_URL}${endpoint}`,
     {
       ...options,
 
@@ -65,17 +68,25 @@ async function api(endpoint, options = {}) {
     }
   );
 
-  // =========================
-  // READ RESPONSE
-  // =========================
+  const contentType =
+    response.headers.get('content-type') || '';
 
-  const data = await response.json();
+  let data;
+
+  if (contentType.includes('application/json')) {
+    data = await response.json();
+  } else {
+    const text = await response.text();
+
+    throw new Error(
+      `API returned a non-JSON response (${response.status}): ${text.slice(
+        0,
+        100
+      )}`
+    );
+  }
 
   console.log(data);
-
-  // =========================
-  // TOKEN EXPIRED / INVALID
-  // =========================
 
   if (response.status === 401) {
     logout();
@@ -83,12 +94,10 @@ async function api(endpoint, options = {}) {
     return;
   }
 
-  // =========================
-  // OTHER API ERRORS
-  // =========================
-
   if (!response.ok) {
-    throw new Error(data.message || 'Something went wrong');
+    throw new Error(
+      data.message || 'Something went wrong'
+    );
   }
 
   return data;

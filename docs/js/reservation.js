@@ -1,5 +1,3 @@
-const API = 'https://posh-cusine-api.onrender.com/';
-
 const form = document.getElementById('reservationForm');
 
 const toast = document.getElementById('toast');
