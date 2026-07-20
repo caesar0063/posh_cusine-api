@@ -1,4 +1,5 @@
-const API_URL = 'https://posh-cusine-api.onrender.com/api/v1/menu';
+const MENU_API_URL =
+  'https://posh-cusine-api.onrender.com/api/v1/menu';
 
 
 const menuGrid = document.getElementById('menu-grid');
@@ -87,7 +88,7 @@ async function fetchMenu() {
 
   try {
 
-    const response = await fetch(API_URL);
+   const response = await fetch(MENU_API_URL);
 
 
     if (!response.ok) {

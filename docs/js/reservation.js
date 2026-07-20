@@ -1,6 +1,6 @@
 console.log("CUSTOMER RESERVATION JS LOADED");
 
-const API_URL =
+const RESERVATION_API_URL =
   'https://posh-cusine-api.onrender.com/api/v1/reservations';
 
 
@@ -182,7 +182,7 @@ if (!form) {
       );
 
 
-      const response = await fetch(API_URL, {
+     const response = await fetch(RESERVATION_API_URL, {
 
 
         method:'POST',
