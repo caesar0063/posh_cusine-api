@@ -75,6 +75,8 @@ if (!form) {
 
   form.addEventListener('submit', async (e) => {
 
+console.log("SUBMIT EVENT ATTACHED");
+
     e.preventDefault();
 
 
