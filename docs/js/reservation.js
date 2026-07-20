@@ -1,137 +1,284 @@
+const API_URL =
+  'https://posh-cusine-api.onrender.com/api/v1/reservations';
+
+
 const form = document.getElementById('reservationForm');
 
 const toast = document.getElementById('toast');
 
 const button = document.getElementById('reserveBtn');
 
-// =========================
-// Prevent Past Reservations
-// =========================
 
-const dateInput = document.getElementById('reservationDate');
+// Stop if reservation form is not on page
+if (!form) {
+  console.error('Reservation form not found');
+} else {
 
-if (dateInput) {
-  const today = new Date().toISOString().split('T')[0];
 
-  dateInput.min = today;
-}
+  // =========================
+  // Prevent Past Reservations
+  // =========================
 
-// =========================
-// Toast
-// =========================
+  const dateInput = document.getElementById('reservationDate');
 
-function showToast(message, color = '#28a745') {
-  if (!toast) {
-    alert(message);
 
-    return;
+  if (dateInput) {
+
+    const today = new Date()
+      .toISOString()
+      .split('T')[0];
+
+    dateInput.min = today;
+
   }
 
-  toast.textContent = message;
 
-  toast.style.background = color;
 
-  toast.classList.add('show');
+  // =========================
+  // Toast
+  // =========================
 
-  setTimeout(() => {
-    toast.classList.remove('show');
-  }, 3000);
-}
+  function showToast(message, color = '#28a745') {
 
-// =========================
-// Submit Reservation
-// =========================
+    if (!toast) {
 
-form.addEventListener('submit', async (e) => {
-  e.preventDefault();
+      alert(message);
 
-  button.disabled = true;
+      return;
 
-  button.textContent = 'Submitting...';
+    }
 
-  const reservation = {
-    fullName: document.getElementById('fullName').value.trim(),
 
-    phone: document.getElementById('phone').value.trim(),
+    toast.textContent = message;
 
-    email: document.getElementById('email').value.trim(),
+    toast.style.background = color;
 
-    guests: document.getElementById('guests').value,
+    toast.classList.add('show');
 
-    reservationDate: document.getElementById('reservationDate').value,
 
-    reservationTime: document.getElementById('reservationTime').value,
+    setTimeout(() => {
 
-    specialRequest: document.getElementById('specialRequest').value.trim(),
-  };
+      toast.classList.remove('show');
 
-  // Required fields validation
+    }, 3000);
 
-  if (
-    !reservation.fullName ||
-    !reservation.phone ||
-    !reservation.guests ||
-    !reservation.reservationDate ||
-    !reservation.reservationTime
-  ) {
-    showToast('Please complete all required fields.', '#dc3545');
-
-    button.disabled = false;
-
-    button.textContent = 'Reserve Table';
-
-    return;
   }
 
-  // Phone validation
 
-  const phonePattern = /^[0-9+\s-]{10,15}$/;
 
-  if (!phonePattern.test(reservation.phone)) {
-    showToast('Enter a valid phone number.', '#dc3545');
 
-    button.disabled = false;
+  // =========================
+  // Submit Reservation
+  // =========================
 
-    button.textContent = 'Reserve Table';
+  form.addEventListener('submit', async (e) => {
 
-    return;
-  }
+    e.preventDefault();
 
-  // Send to backend
 
-  try {
-    const response = await fetch(API, {
-      method: 'POST',
+    if(button){
 
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      button.disabled = true;
 
-      body: JSON.stringify(reservation),
-    });
+      button.textContent = 'Submitting...';
 
-    let result;
+    }
+
+
+
+    const reservation = {
+
+
+      fullName:
+      document.getElementById('fullName').value.trim(),
+
+
+      phone:
+      document.getElementById('phone').value.trim(),
+
+
+      email:
+      document.getElementById('email').value.trim(),
+
+
+      guests:
+      document.getElementById('guests').value,
+
+
+      reservationDate:
+      document.getElementById('reservationDate').value,
+
+
+      reservationTime:
+      document.getElementById('reservationTime').value,
+
+
+      specialRequest:
+      document.getElementById('specialRequest').value.trim()
+
+    };
+
+
+
+
+    // Required fields
+
+    if(
+      !reservation.fullName ||
+      !reservation.phone ||
+      !reservation.guests ||
+      !reservation.reservationDate ||
+      !reservation.reservationTime
+    ){
+
+      showToast(
+        'Please complete all required fields.',
+        '#dc3545'
+      );
+
+
+      resetButton();
+
+      return;
+
+    }
+
+
+
+
+
+    // Phone validation
+
+    const phonePattern = /^[0-9+\s-]{10,15}$/;
+
+
+    if(!phonePattern.test(reservation.phone)){
+
+
+      showToast(
+        'Enter a valid phone number.',
+        '#dc3545'
+      );
+
+
+      resetButton();
+
+      return;
+
+    }
+
+
+
+
 
     try {
-      result = await response.json();
-    } catch {
-      throw new Error('Invalid server response');
+
+
+      console.log(
+        'Sending reservation:',
+        reservation
+      );
+
+
+      const response = await fetch(API_URL, {
+
+
+        method:'POST',
+
+
+        headers:{
+
+
+          'Content-Type':'application/json'
+
+
+        },
+
+
+        body:JSON.stringify(reservation)
+
+
+      });
+
+
+
+
+      const result = await response.json();
+
+
+
+
+      if(response.ok && result.success){
+
+
+        showToast(
+          'Reservation submitted successfully.'
+        );
+
+
+        form.reset();
+
+
+      }else{
+
+
+        showToast(
+          result.message || 'Reservation failed.',
+          '#dc3545'
+        );
+
+
+      }
+
+
+
+
+
+    } catch(error){
+
+
+      console.error(
+        'Reservation Error:',
+        error
+      );
+
+
+      showToast(
+        'Server unavailable. Try again later.',
+        '#dc3545'
+      );
+
+
     }
 
-    if (result.success) {
-      showToast('Reservation submitted successfully.');
 
-      form.reset();
-    } else {
-      showToast(result.message || 'Reservation failed.', '#dc3545');
-    }
-  } catch (error) {
-    console.error(error);
 
-    showToast(error.message || 'Server unavailable. Try again later.', '#dc3545');
+    resetButton();
+
+
+  });
+
+
+
+}
+
+
+
+
+
+function resetButton(){
+
+
+  if(button){
+
+
+    button.disabled = false;
+
+
+    button.textContent = 'Reserve Table';
+
+
   }
 
-  button.disabled = false;
 
-  button.textContent = 'Reserve Table';
-});
+}
