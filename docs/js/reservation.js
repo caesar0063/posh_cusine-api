@@ -1,3 +1,5 @@
+console.log("CUSTOMER RESERVATION JS LOADED");
+
 const API_URL =
   'https://posh-cusine-api.onrender.com/api/v1/reservations';
 

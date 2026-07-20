@@ -1,3 +1,5 @@
+console.log("ADMIN RESERVATION JS LOADED");
+
 /* ===========================================
    AUTHENTICATION
 =========================================== */
